@@ -1,207 +1,145 @@
 ---
 name: firetiger-query
-description: "Query traces, logs, and metrics in Firetiger using TraceQL"
+description: "Query telemetry data in Firetiger using SQL via MCP"
 user_invocable: true
-user_invocable_description: "Search and analyze telemetry data with TraceQL queries"
+user_invocable_description: "Query traces, logs, and metrics with SQL"
 ---
 
 # Firetiger Query Guide
 
-You are an expert at querying observability data in Firetiger using TraceQL and other query methods.
+You are an expert at querying observability data in Firetiger using SQL via the MCP server.
 
-## TraceQL Overview
+## Overview
 
-TraceQL is Firetiger's query language for searching traces. It uses a pipeline syntax similar to Grafana Tempo.
+Firetiger stores telemetry data in Apache Iceberg tables and provides a query interface using DuckDB SQL. Use the Firetiger MCP server's `query` tool to execute SQL queries against the data warehouse.
 
-### Basic Syntax
+## Using the MCP Query Tool
 
-```
-{ <spanset selectors> } | <pipeline operators>
-```
+The Firetiger MCP server provides a `query` tool that executes DuckDB SQL against Firetiger's Iceberg data warehouse.
 
-### Spanset Selectors
+### Capabilities
 
-Select spans based on attributes:
-
-```traceql
-// By service name
-{ service.name = "api-gateway" }
-
-// By span name
-{ name = "HTTP GET" }
-
-// By status
-{ status = error }
-
-// By duration (in nanoseconds, use duration literals)
-{ duration > 1s }
-
-// By resource attributes
-{ resource.service.name = "checkout" }
-
-// By span attributes
-{ span.http.method = "POST" }
-{ span.http.status_code >= 400 }
-```
-
-### Comparison Operators
-
-- `=` - Equals
-- `!=` - Not equals
-- `>`, `>=`, `<`, `<=` - Numeric comparisons
-- `=~` - Regex match
-- `!~` - Regex not match
-
-### Combining Conditions
-
-```traceql
-// AND (within same selector)
-{ service.name = "api" && status = error }
-
-// OR (separate selectors)
-{ service.name = "api" } || { service.name = "web" }
-
-// Chained spansets (spans in same trace)
-{ service.name = "frontend" } >> { service.name = "backend" }
-```
-
-### Pipeline Operators
-
-Process selected spans:
-
-```traceql
-// Count spans
-{ status = error } | count()
-
-// Average duration
-{ service.name = "api" } | avg(duration)
-
-// Select specific attributes
-{ name = "HTTP GET" } | select(span.http.url, duration)
-
-// Filter by aggregate
-{ service.name = "api" } | by(span.http.route) | count() > 100
-```
+- Standard SQL including JOINs, CTEs, and aggregate functions
+- DuckDB SQL dialect and functions
+- Access to traces, logs, and metrics tables
 
 ## Common Query Patterns
 
-### Find Slow Requests
-
-```traceql
-{ service.name = "api-gateway" && duration > 2s }
-```
-
-### Find Errors
-
-```traceql
-{ status = error }
-
-// With specific error message
-{ span.error.message =~ ".*timeout.*" }
-```
-
-### Find Requests by User
-
-```traceql
-{ span.user.id = "user-123" }
-```
-
-### Trace a Request Path
-
-```traceql
-{ span.http.url = "/api/checkout" } >> { service.name = "payment-service" }
-```
-
-### Find Database Queries
-
-```traceql
-{ span.db.system = "postgresql" && duration > 100ms }
-```
-
-### Count by Endpoint
-
-```traceql
-{ service.name = "api" } | by(span.http.route) | count()
-```
-
-### P99 Latency by Service
-
-```traceql
-{ } | by(service.name) | quantile(duration, 0.99)
-```
-
-## Log Queries
-
-Search logs using attribute filters:
-
-```
-service.name = "api" AND level = "error"
-message =~ "connection.*failed"
-trace_id = "abc123..."
-```
-
-### Link Logs to Traces
-
-Logs with `trace_id` and `span_id` attributes are automatically correlated with traces.
-
-## Metrics Queries
-
-Query metrics stored in Firetiger:
-
-```promql
-// Request rate
-rate(http_requests_total[5m])
-
-// Error rate
-sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))
-
-// P99 latency histogram
-histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
-```
-
-## DuckDB Integration
-
-For advanced analytics, query Firetiger's Iceberg tables directly with DuckDB:
+### Find Recent Traces
 
 ```sql
--- Connect to Firetiger catalog
-ATTACH 'firetiger' AS ft (TYPE ICEBERG);
+SELECT
+    trace_id,
+    service_name,
+    span_name,
+    duration_ns / 1e6 as duration_ms,
+    timestamp
+FROM traces
+WHERE timestamp > now() - INTERVAL '1 hour'
+ORDER BY timestamp DESC
+LIMIT 100;
+```
 
--- Query traces
+### Find Slow Requests
+
+```sql
 SELECT
     trace_id,
     service_name,
     span_name,
     duration_ns / 1e6 as duration_ms
-FROM ft.traces
-WHERE timestamp > now() - INTERVAL '1 hour'
-    AND service_name = 'api-gateway'
+FROM traces
+WHERE duration_ns > 2000000000  -- 2 seconds in nanoseconds
+    AND timestamp > now() - INTERVAL '1 hour'
 ORDER BY duration_ns DESC
-LIMIT 100;
+LIMIT 50;
+```
 
--- Aggregate by endpoint
+### Find Errors
+
+```sql
+SELECT
+    trace_id,
+    service_name,
+    span_name,
+    status_code,
+    timestamp
+FROM traces
+WHERE status_code = 'ERROR'
+    AND timestamp > now() - INTERVAL '1 hour'
+ORDER BY timestamp DESC;
+```
+
+### Aggregate by Service
+
+```sql
+SELECT
+    service_name,
+    count(*) as span_count,
+    avg(duration_ns) / 1e6 as avg_duration_ms,
+    max(duration_ns) / 1e6 as max_duration_ms
+FROM traces
+WHERE timestamp > now() - INTERVAL '1 hour'
+GROUP BY service_name
+ORDER BY span_count DESC;
+```
+
+### Latency Percentiles by Endpoint
+
+```sql
 SELECT
     span_attributes['http.route'] as route,
     count(*) as requests,
     avg(duration_ns) / 1e6 as avg_ms,
+    percentile_cont(0.50) WITHIN GROUP (ORDER BY duration_ns) / 1e6 as p50_ms,
+    percentile_cont(0.95) WITHIN GROUP (ORDER BY duration_ns) / 1e6 as p95_ms,
     percentile_cont(0.99) WITHIN GROUP (ORDER BY duration_ns) / 1e6 as p99_ms
-FROM ft.traces
+FROM traces
 WHERE timestamp > now() - INTERVAL '1 hour'
+    AND span_attributes['http.route'] IS NOT NULL
 GROUP BY 1
 ORDER BY requests DESC;
 ```
 
-## Using the MCP Server
+### Search Logs
 
-The Firetiger MCP server provides tools for executing queries programmatically:
+```sql
+SELECT
+    timestamp,
+    service_name,
+    severity,
+    body,
+    trace_id
+FROM logs
+WHERE timestamp > now() - INTERVAL '1 hour'
+    AND severity = 'ERROR'
+ORDER BY timestamp DESC
+LIMIT 100;
+```
 
-- `firetiger_query_traces` - Execute TraceQL queries
-- `firetiger_search_logs` - Search log entries
-- `firetiger_get_trace` - Fetch a specific trace by ID
+### Correlate Logs with Traces
+
+```sql
+SELECT
+    l.timestamp,
+    l.body as log_message,
+    t.span_name,
+    t.service_name
+FROM logs l
+JOIN traces t ON l.trace_id = t.trace_id
+WHERE l.timestamp > now() - INTERVAL '1 hour'
+    AND l.severity = 'ERROR'
+ORDER BY l.timestamp DESC;
+```
 
 ## Tips
 
-1. **Start broad, then narrow**: Begin with service/time filters, then add specific conditions
-2. **Use trace IDs**: When debugging, find one problematic trace and explore from there
-3. **Check timestamps**: Ensure your query time range includes the data you're looking for
-4. **Attribute names**: Use `resource.*` for resource attributes, `span.*` for span attributes
+1. **Always filter by timestamp**: Include a time range filter to limit the data scanned
+2. **Use LIMIT**: Start with small result sets and increase as needed
+3. **Check attribute names**: Span attributes are accessed via `span_attributes['key']`
+4. **Duration is in nanoseconds**: Divide by 1e6 for milliseconds or 1e9 for seconds
+5. **Use CTEs for complex queries**: Break down complex analysis into readable steps
+
+## Discovering Schema
+
+Use the MCP `schema` tool to discover available tables, columns, and their types before writing queries.
