@@ -32,12 +32,42 @@ Use when the user wants to:
 
 **Trigger phrases:** "find traces", "search logs", "query data", "show me errors", "analyze latency"
 
+### Investigations → `firetiger-investigate`
+Use when the user wants to:
+- Start a new investigation
+- Diagnose an issue or incident
+- Analyze a problem with observability data
+- Track findings during troubleshooting
+
+**Trigger phrases:** "investigate", "start investigation", "diagnose", "what's wrong with", "troubleshoot"
+
+### Agent Planning → `firetiger-plan`
+Use when the user wants to:
+- Create a new agent
+- Define agent capabilities
+- Set up automation
+- Design runbooks for agents
+
+**Trigger phrases:** "create agent", "new agent", "plan agent", "set up automation", "design agent"
+
+### Run Agent → `firetiger-run`
+Use when the user wants to:
+- Run an existing agent
+- Start an agent session
+- Interact with an agent
+- Execute an agent task
+
+**Trigger phrases:** "run agent", "start agent", "talk to agent", "agent session", "execute agent"
+
 ## Execution
 
 1. Identify the category of the user's request
 2. Use the Skill tool to invoke the appropriate skill:
    - `firetiger-instrument` for instrumentation tasks
    - `firetiger-query` for querying and analysis
+   - `firetiger-investigate` for investigations and diagnosis
+   - `firetiger-plan` for creating new agents
+   - `firetiger-run` for running existing agents
 3. If the request spans multiple categories, handle them sequentially
 
 ## MCP Server

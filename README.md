@@ -15,6 +15,9 @@ Connect to Firetiger's API for executing SQL queries against the data warehouse 
 | `firetiger` | Router skill - directs observability tasks to the appropriate specialized skill |
 | `firetiger-instrument` | OpenTelemetry instrumentation for Node.js, Python, Go, and Rust applications |
 | `firetiger-query` | SQL queries against Firetiger's Iceberg data warehouse via MCP |
+| `firetiger-investigate` | Start and manage investigations to diagnose issues with telemetry data |
+| `firetiger-plan` | Plan and create new AI agents for automating observability workflows |
+| `firetiger-run` | Run existing agents by creating sessions and interacting with them |
 
 ## Installation
 
