@@ -1,34 +1,59 @@
-# Cursor plugin template
+# Firetiger Cursor Plugin
 
-Build and publish Cursor Marketplace plugins from a single repo.
+The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com) - an observability platform that accepts OpenTelemetry data and stores telemetry in Apache Iceberg tables.
 
-Two starter plugins are included:
+## What's Included
 
-- **starter-simple**: rules and skills only
-- **starter-advanced**: rules, skills, agents, commands, hooks, MCP, and scripts
+### MCP Server
 
-## Getting started
+Connect to Firetiger's API for executing TraceQL queries, searching logs, and fetching trace data directly from Cursor.
 
-[Use this template](https://github.com/cursor/plugin-template/generate) to create a new repository, then customize:
+### Skills
 
-1. `.cursor-plugin/marketplace.json`: set marketplace `name`, `owner`, and `metadata`.
-2. `plugins/*/.cursor-plugin/plugin.json`: set `name` (lowercase kebab-case), `displayName`, `author`, `description`, `keywords`, `license`, and `version`.
-3. Replace placeholder rules, skills, agents, commands, hooks, scripts, and logos.
+| Skill | Description |
+|-------|-------------|
+| `firetiger` | Router skill - directs observability tasks to the appropriate specialized skill |
+| `firetiger-setup` | OpenTelemetry instrumentation for Node.js, Python, Go, and Rust applications |
+| `firetiger-query` | TraceQL queries, log search, metrics analysis, and DuckDB integration |
+| `firetiger-aws` | AWS integrations - CloudWatch Logs forwarding and ECS task state events |
 
-To add more plugins, see `docs/add-a-plugin.md`.
+## Installation
 
-## Single plugin vs multi-plugin
+Install this plugin in Cursor to get started:
 
-This template defaults to **multi-plugin** (multiple plugins in one repo).
+1. Open Cursor Settings
+2. Navigate to Plugins
+3. Search for "Firetiger"
+4. Click Install
 
-For a **single plugin**, move your plugin folder contents to the repository root, keep one `.cursor-plugin/plugin.json`, and remove `.cursor-plugin/marketplace.json`.
+## Usage
 
-## Submission checklist
+### Instrument Your Application
 
-- Each plugin has a valid `.cursor-plugin/plugin.json`.
-- Plugin names are unique, lowercase, and kebab-case.
-- `.cursor-plugin/marketplace.json` entries map to real plugin folders.
-- All frontmatter metadata is present in rule, skill, agent, and command files.
-- Logos are committed and referenced with relative paths.
-- `node scripts/validate-template.mjs` passes.
-- Repository link is ready for submission to the Cursor team (Slack or `kniparko@anysphere.com`).
+Ask Cursor to add observability to your application:
+
+> "Add OpenTelemetry tracing to my Node.js app for Firetiger"
+
+### Query Your Data
+
+Search traces and logs using natural language:
+
+> "Find all traces where the checkout service returned an error"
+> "Show me the slowest API requests from the last hour"
+
+### Set Up AWS Integrations
+
+Configure CloudWatch and ECS integrations:
+
+> "Forward my CloudWatch logs to Firetiger"
+> "Set up ECS task state change events for Firetiger"
+
+## Resources
+
+- [Firetiger Documentation](https://docs.firetiger.com)
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
+- [TraceQL Reference](https://docs.firetiger.com/traceql)
+
+## License
+
+MIT
