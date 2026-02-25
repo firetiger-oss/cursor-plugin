@@ -1,5 +1,5 @@
 ---
-name: firetiger-setup
+name: firetiger-instrument
 description: "Add OpenTelemetry instrumentation to applications for Firetiger observability"
 user_invocable: true
 user_invocable_description: "Instrument your application with OpenTelemetry for Firetiger"
