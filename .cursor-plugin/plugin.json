@@ -1,0 +1,26 @@
+{
+  "name": "firetiger",
+  "displayName": "Firetiger",
+  "version": "0.1.0",
+  "description": "Firetiger observability toolkit for Cursor - OpenTelemetry setup, TraceQL queries, and AWS integrations.",
+  "author": {
+    "name": "Firetiger",
+    "email": "hello@firetiger.com",
+    "url": "https://firetiger.com"
+  },
+  "keywords": [
+    "firetiger",
+    "observability",
+    "opentelemetry",
+    "otel",
+    "tracing",
+    "logs",
+    "metrics",
+    "traceql",
+    "aws",
+    "cloudwatch"
+  ],
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "primaryColor": "#F76A31"
+}
