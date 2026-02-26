@@ -44,11 +44,11 @@ Use when the user wants to:
 ### Agent Planning → `firetiger-plan`
 Use when the user wants to:
 - Create a new agent
-- Define agent capabilities
-- Set up automation
-- Design runbooks for agents
+- Define agent prompts and capabilities
+- Set up scheduled triggers (cron) for agents
+- Create manual triggers for on-demand invocation
 
-**Trigger phrases:** "create agent", "new agent", "plan agent", "set up automation", "design agent"
+**Trigger phrases:** "create agent", "new agent", "plan agent", "schedule agent", "create trigger"
 
 ### Run Agent → `firetiger-run`
 Use when the user wants to:
