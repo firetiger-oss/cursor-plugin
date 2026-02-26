@@ -1,6 +1,6 @@
 # Firetiger Cursor Plugin
 
-The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com) - an AI agent platform that automatically detects, investigates, and fixes production bugs before customers encounter them.
+The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com). Firetiger agents monitor, investigate, catalog issues, and apply runbooks autonomously -- the Cursor agents write all your code, Firetiger agents makes sure it works in prod.
 
 ## What's Included
 
