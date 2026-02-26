@@ -79,8 +79,8 @@ list with resource: "agents"
 ```
 
 Look for:
-- **name**: The agent's identifier
-- **display_name**: Human-readable name
+- **name**: The agent's resource name
+- **title**: Human-readable title
 - **description**: What the agent does
 
 ### 2. Review Agent Capabilities
@@ -92,9 +92,9 @@ get with name: "agents/{agent-id}"
 ```
 
 Understand:
-- What tools the agent has access to
-- What instructions guide its behavior
-- What triggers it normally responds to
+- What connections (tools) the agent has access to
+- What prompt guides its behavior
+- Whether the agent is enabled (`state: AGENT_STATE_ON`)
 
 ### 3. Start a Session
 
