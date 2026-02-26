@@ -207,25 +207,3 @@ send_agent_message
 4. **Ask follow-ups**: Drill down into findings with additional questions
 5. **Request actions**: Ask the agent to create investigations, send alerts, etc.
 
-## Troubleshooting
-
-### Agent Not Responding
-
-If `send_agent_message` doesn't return:
-- Check if the agent is enabled
-- Verify the session ID is correct
-- Review agent logs for errors
-
-### Unexpected Results
-
-If the agent's response doesn't match expectations:
-- Review the agent's instructions with `get`
-- Check what tools the agent has access to
-- Be more specific in your request
-
-### Session Context Lost
-
-If the agent seems to forget previous context:
-- Use `read_agent_messages` to verify session history
-- Ensure you're using the same session ID
-- Start a new session if the old one is corrupted
