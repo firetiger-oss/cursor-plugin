@@ -1,0 +1,63 @@
+name: Enforce commit message policy
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine commit range
+        id: range
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Range of commits pushed in this event
+            echo "range=${{ github.event.before }}..${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Range between PR base and head
+            echo "range=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            # Fallback: just the current commit
+            echo "range=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check commit messages
+        run: |
+          set -euo pipefail
+
+          RANGE="${{ steps.range.outputs.range }}"
+          echo "Checking commit messages in range: $RANGE"
+
+          # Collect commit messages in the range (if any)
+          if ! COMMITS=$(git log --format='%H %s' "$RANGE" 2>/dev/null); then
+            echo "No commits found in range or unable to determine range; skipping check."
+            exit 0
+          fi
+
+          if [ -z "$COMMITS" ]; then
+            echo "No commits to check."
+            exit 0
+          fi
+
+          echo "Commit messages under review:"
+          echo "$COMMITS"
+
+          if echo "$COMMITS" | grep -qi 'Claude'; then
+            echo "::error ::Commit messages must not contain the phrase 'Claude'."
+            echo "Please amend your commit messages to remove any mention of 'Claude' and push again."
+            exit 1
+          fi
+
+          echo "All commit messages comply with the policy."
+
