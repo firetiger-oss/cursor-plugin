@@ -1,0 +1,6 @@
+{
+  "firetiger": {
+    "type": "http",
+    "url": "https://api.cloud.firetiger.com/mcp/v1"
+  }
+}

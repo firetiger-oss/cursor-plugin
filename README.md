@@ -1,34 +1,33 @@
-# Cursor plugin template
+<p align="center">
+  <img src="assets/cursor-firetiger.png" alt="Cursor + Firetiger Logos" width="420">
+</p>
 
-Build and publish Cursor Marketplace plugins from a single repo.
+# Firetiger Cursor Plugin
 
-Two starter plugins are included:
+The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com). Firetiger agents monitor, investigate, catalog issues, and apply runbooks autonomously -- the Cursor agents write all your code, Firetiger agents makes sure it works in prod.
 
-- **starter-simple**: rules and skills only
-- **starter-advanced**: rules, skills, agents, commands, hooks, MCP, and scripts
+## What's Included
 
-## Getting started
+### MCP Server
 
-[Use this template](https://github.com/cursor/plugin-template/generate) to create a new repository, then customize:
+Connect to Firetiger's API for querying telemetry data, managing investigations, and interacting with AI agents directly from Cursor.
 
-1. `.cursor-plugin/marketplace.json`: set marketplace `name`, `owner`, and `metadata`.
-2. `plugins/*/.cursor-plugin/plugin.json`: set `name` (lowercase kebab-case), `displayName`, `author`, `description`, `keywords`, `license`, and `version`.
-3. Replace placeholder rules, skills, agents, commands, hooks, scripts, and logos.
+### Skills
 
-To add more plugins, see `docs/add-a-plugin.md`.
+| Skill | Description |
+|-------|-------------|
+| `firetiger` | Router skill - directs tasks to the appropriate specialized skill |
+| `firetiger-instrument` | OpenTelemetry instrumentation for Node.js, Python, Go, and Rust applications |
+| `firetiger-query` | SQL queries against Firetiger's data warehouse via MCP |
+| `firetiger-investigate` | Start and manage investigations to diagnose issues with telemetry data |
+| `firetiger-plan` | Plan and create new AI agents for automating workflows |
+| `firetiger-run` | Run existing agents by creating sessions and interacting with them |
 
-## Single plugin vs multi-plugin
+## Resources
 
-This template defaults to **multi-plugin** (multiple plugins in one repo).
+- [Firetiger Documentation](https://docs.firetiger.com)
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
 
-For a **single plugin**, move your plugin folder contents to the repository root, keep one `.cursor-plugin/plugin.json`, and remove `.cursor-plugin/marketplace.json`.
+## License
 
-## Submission checklist
-
-- Each plugin has a valid `.cursor-plugin/plugin.json`.
-- Plugin names are unique, lowercase, and kebab-case.
-- `.cursor-plugin/marketplace.json` entries map to real plugin folders.
-- All frontmatter metadata is present in rule, skill, agent, and command files.
-- Logos are committed and referenced with relative paths.
-- `node scripts/validate-template.mjs` passes.
-- Repository link is ready for submission to the Cursor team (Slack or `kniparko@anysphere.com`).
+MIT
