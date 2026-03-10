@@ -1,14 +1,14 @@
 {
-  "name": "firetiger",
-  "version": "0.2.0",
-  "description": "Cursor plugin for Firetiger observability workflows and MCP-powered investigations.",
+  "name": "Firetiger",
+  "version": "0.2.1",
+  "description": "Cursor plugin for Firetiger agentic operations plugin with skills and MCP access.",
   "author": {
-    "name": "Firetiger"
+    "name": "Firetiger, Inc."
   },
   "homepage": "https://firetiger.com",
   "repository": "https://github.com/firetiger-oss/cursor-plugin",
   "license": "MIT",
-  "keywords": ["cursor", "plugin", "observability", "firetiger", "mcp"],
+  "keywords": ["cursor", "plugin", "observability", "operations", "devops", "ai", "agentic", "firetiger", "mcp"],
   "logo": "assets/firetiger.svg",
   "skills": "skills",
   "mcpServers": "mcp.json"
