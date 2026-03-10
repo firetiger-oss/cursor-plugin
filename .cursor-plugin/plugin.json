@@ -1,0 +1,15 @@
+{
+  "name": "firetiger",
+  "version": "0.1.0",
+  "description": "Cursor plugin for Firetiger observability workflows and MCP-powered investigations.",
+  "author": {
+    "name": "Firetiger"
+  },
+  "homepage": "https://firetiger.com",
+  "repository": "https://github.com/firetigerai/cursor-plugin",
+  "license": "MIT",
+  "keywords": ["cursor", "plugin", "observability", "firetiger", "mcp"],
+  "logo": "assets/firetiger.svg",
+  "skills": "skills",
+  "mcpServers": "mcp.json"
+}
