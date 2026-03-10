@@ -1,10 +1,20 @@
 <p align="center">
-  <img src="assets/cursor-firetiger.png" alt="Cursor + Firetiger Logos" width="420">
+  <img src="assets/firetiger.svg" alt="Firetiger logo" width="220">
 </p>
 
 # Firetiger Cursor Plugin
 
-The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com). Firetiger agents monitor, investigate, catalog issues, and apply runbooks autonomously -- the Cursor agents write all your code, Firetiger agents makes sure it works in prod.
+The official [Cursor](https://cursor.com) plugin for [Firetiger](https://firetiger.com). Firetiger agents monitor, investigate, catalog issues, and apply runbooks autonomously while Cursor helps you build and debug code.
+
+## Repository Layout
+
+This repository publishes a single plugin:
+
+- `.cursor-plugin/plugin.json`: plugin manifest
+- `.cursor-plugin/marketplace.json`: marketplace manifest pointing at the root plugin
+- `skills/`: Firetiger skills exposed to Cursor
+- `mcp.json`: Firetiger MCP server configuration
+- `assets/firetiger.svg`: plugin logo
 
 ## What's Included
 
@@ -22,6 +32,14 @@ Connect to Firetiger's API for querying telemetry data, managing investigations,
 | `firetiger-investigate` | Start and manage investigations to diagnose issues with telemetry data |
 | `firetiger-plan` | Plan and create new AI agents for automating workflows |
 | `firetiger-run` | Run existing agents by creating sessions and interacting with them |
+
+## Validation
+
+Run the repository check before publishing changes:
+
+```bash
+node scripts/validate-template.mjs
+```
 
 ## Resources
 

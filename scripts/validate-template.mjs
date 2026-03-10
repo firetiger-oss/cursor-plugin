@@ -345,13 +345,13 @@ async function main() {
     await validateComponentFrontmatter(pluginDir, entry.name);
 
     const hooksPath = path.join(pluginDir, "hooks", "hooks.json");
-    if (!(await pathExists(hooksPath))) {
-      addWarning(`${entry.name}: no hooks/hooks.json file found (only needed when using hooks).`);
+    if (pluginManifest.hooks !== undefined && !(await pathExists(hooksPath))) {
+      addWarning(`${entry.name}: hooks are declared but hooks/hooks.json is missing.`);
     }
 
     const mcpPath = path.join(pluginDir, "mcp.json");
-    if (!(await pathExists(mcpPath))) {
-      addWarning(`${entry.name}: no mcp.json file found (only needed when using MCP servers).`);
+    if (pluginManifest.mcpServers !== undefined && !(await pathExists(mcpPath))) {
+      addWarning(`${entry.name}: MCP servers are declared but mcp.json is missing.`);
     }
   }
 

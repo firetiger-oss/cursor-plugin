@@ -1,24 +1,17 @@
 {
-  "name": "cursor-plugin-starters",
+  "name": "firetiger-marketplace",
   "owner": {
-    "name": "Your Org",
-    "email": "plugins@example.com"
+    "name": "Firetiger"
   },
   "metadata": {
-    "description": "Starter marketplace template for Cursor plugins",
-    "version": "0.1.0",
-    "pluginRoot": "plugins"
+    "description": "Marketplace manifest for the Firetiger Cursor plugin",
+    "version": "0.2.0"
   },
   "plugins": [
     {
-      "name": "starter-simple",
-      "source": "./plugins/starter-simple",
-      "description": "Minimal plugin with rules and skills only"
-    },
-    {
-      "name": "starter-advanced",
-      "source": "./plugins/starter-advanced",
-      "description": "Full-featured plugin with rules, skills, agents, commands, hooks, and MCP"
+      "name": "firetiger",
+      "source": ".",
+      "description": "Firetiger observability plugin with skills and MCP access"
     }
   ]
 }
