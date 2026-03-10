@@ -1,17 +1,17 @@
 {
   "name": "firetiger-marketplace",
   "owner": {
-    "name": "Firetiger"
+    "name": "Firetiger, Inc."
   },
   "metadata": {
-    "description": "Marketplace manifest for the Firetiger Cursor plugin",
-    "version": "0.2.0"
+    "description": "Marketplace manifest for the Firetiger Cursor plugin.",
+    "version": "0.2.1"
   },
   "plugins": [
     {
-      "name": "firetiger",
+      "name": "Firetiger",
       "source": ".",
-      "description": "Firetiger observability plugin with skills and MCP access"
+      "description": "Firetiger agentic operations plugin with skills and MCP access."
     }
   ]
 }
