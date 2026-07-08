@@ -1,78 +1,72 @@
 ---
 name: firetiger
-description: "Route Firetiger observability tasks to the appropriate specialized skill"
+description: >
+  Use when the user mentions Firetiger or wants to work with their observability
+  data — setting up Firetiger, instrumenting an app with OpenTelemetry, querying
+  traces/logs/metrics with SQL, investigating an incident, monitoring a PR or
+  deployment, or creating a monitoring agent. Always use this skill when the user
+  says "Firetiger", even for simple asks — it routes to the specialized skill that
+  carries the critical gotchas (Basic-auth ingest, DuckDB SQL over per-service
+  tables, the @firetiger comment flow) that prevent common mistakes.
+license: Apache-2.0
 user_invocable: true
-user_invocable_description: "Firetiger observability toolkit - instrumentation and queries"
+user_invocable_description: "Firetiger observability toolkit — setup, instrumentation, queries, investigations, deploy monitoring, and agents"
+metadata:
+  author: firetiger
+  version: "1.0.0"
+  homepage: https://firetiger.com
+  source: https://github.com/firetiger-oss/skills
 ---
 
-# Firetiger Observability Toolkit
+# Firetiger
 
-You are a routing agent for Firetiger observability tasks. Analyze the user's request and delegate to the appropriate specialized skill.
+[Firetiger](https://firetiger.com) is an AI-powered observability platform. Telemetry (traces, logs, metrics)
+lands in Apache Iceberg tables you query with SQL, and autonomous agents monitor your services, investigate
+issues, and watch deployments.
 
-## Task Routing
+This skill is a **router**. Identify what the user wants and invoke the matching specialized skill — each one
+is self-contained and carries the gotchas for its task.
 
-Evaluate what the user wants to accomplish and use the appropriate skill:
+## How you talk to Firetiger
 
-### Instrumentation → `firetiger-instrument`
-Use when the user wants to:
-- Add OpenTelemetry instrumentation to their application
-- Install OTEL SDKs (Node.js, Python, Go, Rust)
-- Configure environment variables for telemetry export
-- Set up automatic instrumentation libraries
-- Connect their application to Firetiger
+Two mechanisms, referenced throughout the skills:
 
-**Trigger phrases:** "instrument my app", "add observability", "set up tracing", "configure OpenTelemetry", "send traces to Firetiger"
+- **The Firetiger MCP server** — `https://api.cloud.firetiger.com/mcp/v1` (OAuth 2.0 bearer; the first tool
+  call opens a browser to sign in). Tools: `get_ingest_credentials`, `get_deploy_credentials`, `query`,
+  `monitor_pr`, `create_agent_with_goal`, `send_agent_message`, `read_agent_messages`, `resolve_url`,
+  `get_subscription_status`/`get_checkout_url` (billing), `onboard_github`/`onboard_slack`/`onboard_linear`
+  (OAuth connect), and generic CRUD (`schema`/`list`/`get`/`create`/`update`/`delete`). The collections a
+  client agent works with: `agents` + `sessions` (create/run agents), `triggers` + `scheduled-agent-runs`
+  (automate them), `investigations` (AI diagnosis sessions), `issues` (Known Issues, IDs are `FT-{n}` call
+  signs), `monitoring-plans` (deploy monitoring, read/delete), and `connections` (integrations). Always
+  `schema` a collection before `create`/`update`. Some tools and collections are gated by deployment config
+  and API-key policy.
+- **The `@firetiger` GitHub flow** — comment `@firetiger` on a pull request to have Firetiger monitor the
+  deployment that PR produces.
 
-### Querying Data → `firetiger-query`
-Use when the user wants to:
-- Query traces, logs, or metrics with SQL
-- Analyze telemetry data
-- Find errors or slow requests
-- Aggregate or summarize observability data
+**Key gotcha:** if the MCP tools aren't available, the user hasn't connected the Firetiger MCP server yet. The
+target skill handles this — it tells the user to connect `https://api.cloud.firetiger.com/mcp/v1` and sign in,
+then retries.
 
-**Trigger phrases:** "find traces", "search logs", "query data", "show me errors", "analyze latency"
+## Routing
 
-### Investigations → `firetiger-investigate`
-Use when the user wants to:
-- Start a new investigation
-- Diagnose an issue or incident
-- Analyze a problem with observability data
-- Track findings during troubleshooting
-
-**Trigger phrases:** "investigate", "start investigation", "diagnose", "what's wrong with", "troubleshoot"
-
-### Agent Planning → `firetiger-plan`
-Use when the user wants to:
-- Create a new agent
-- Define agent prompts and capabilities
-- Set up scheduled triggers (cron) for agents
-- Create manual triggers for on-demand invocation
-
-**Trigger phrases:** "create agent", "new agent", "plan agent", "schedule agent", "create trigger"
-
-### Run Agent → `firetiger-run`
-Use when the user wants to:
-- Run an existing agent
-- Start an agent session
-- Interact with an agent
-- Execute an agent task
-
-**Trigger phrases:** "run agent", "start agent", "talk to agent", "agent session", "execute agent"
+| The user wants to… | Skill | Trigger phrases |
+|---|---|---|
+| Onboard a project end-to-end (detect stack → instrument → connect → agent) | **`firetiger-setup`** | "set up Firetiger", "onboard this project", "connect my app" |
+| Add OpenTelemetry instrumentation (Node/Next.js/Python/Go/Rust) | **`firetiger-instrument`** | "instrument my app", "add OpenTelemetry", "send traces" |
+| Query traces, logs, or metrics with SQL | **`firetiger-query`** | "find traces", "search logs", "show me errors", "analyze latency" |
+| Investigate an incident and track findings | **`firetiger-investigate`** | "investigate", "diagnose", "what's wrong with", "troubleshoot" |
+| Monitor a PR/deployment | **`firetiger-monitor-deploy`** | "monitor this PR", "watch this deploy", "@firetiger" |
+| Create a monitoring agent, or configure agents/triggers | **`firetiger-create-agent`** | "create an agent", "monitor X automatically", "schedule an agent" |
 
 ## Execution
 
-1. Identify the category of the user's request
-2. Use the Skill tool to invoke the appropriate skill:
-   - `firetiger-instrument` for instrumentation tasks
-   - `firetiger-query` for querying and analysis
-   - `firetiger-investigate` for investigations and diagnosis
-   - `firetiger-plan` for creating new agents
-   - `firetiger-run` for running existing agents
-3. If the request spans multiple categories, handle them sequentially
+1. Classify the request into one row above.
+2. Invoke the corresponding skill with the Skill tool (e.g. `firetiger-query`).
+3. If a request spans categories ("set up Firetiger and monitor my next PR"), handle them sequentially —
+   usually `firetiger-setup` first, then the follow-up.
 
-## MCP Server
+## Resources
 
-The Firetiger MCP server is available for direct API interactions. Use it when you need to:
-- Execute SQL queries against the data warehouse
-- Fetch trace or log data
-- Interact with Firetiger's API directly
+- [Firetiger Documentation](https://docs.firetiger.com)
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
